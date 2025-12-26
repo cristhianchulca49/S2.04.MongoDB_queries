@@ -122,7 +122,7 @@ db.restaurants.find(
         name: 1,
         cuisine: 1,
         "grades.score": 1,
-        "location.coordinates.0": 1
+        "location.coordinates": 1
     }
 )
 
@@ -139,12 +139,13 @@ db.restaurants.find(
         name: 1,
         cuisine: 1,
         "grades.score": 1,
-        "location.coordinates.0": 1
+        "location.coordinates": 1
     }
 )
 
 
 // 13. Trobar restaurants que no són 'American', grau 'A', i no són de Brooklyn. Ordenats per cuisine descendent.
+use("nyc");
 db.restaurants.find(
     {
         cuisine: { $ne: "American" },
@@ -153,11 +154,10 @@ db.restaurants.find(
     },
     {
         _id: 0,
-        restaurant_id: 1,
         name: 1,
         cuisine: 1,
         borough: 1,
-        grades: 1
+        "grades.grade": 1
     }
 ).sort({ cuisine: -1 })
 
@@ -219,16 +219,53 @@ db.restaurants.find(
 
 
 // 18. Trobar restaurant_id, name, borough i cuisine per a Staten Island, Queens, Bronx o Brooklyn.
-
+db.restaurants.find(
+    {
+        borough: { $in: ["Staten Island", "Queens", "Bronx", "Brooklyn"] }
+    },
+    {
+        _id: 0,
+        restaurant_id: 1,
+        name: 1,
+        borough: 1,
+        cuisine: 1
+    }
+)
 
 // 19. Trobar restaurant_id, name, borough i cuisine per a restaurants que NO són d'aquests barris.
-
+db.restaurants.find(
+    {
+        borough: { $nin: ["Staten Island", "Queens", "Bronx", "Brooklyn"] }
+    },
+    {
+        _id: 0,
+        restaurant_id: 1,
+        name: 1,
+        borough: 1,
+        cuisine: 1
+    }
+)
 
 // 20. Trobar restaurant_id, name, borough i cuisine amb marcador no superior a 10.
 
 
 // 21. Trobar restaurants que preparen peix, no 'American' ni 'Chinees', o nom comença amb 'Wil'.
-
+db.restaurants.find(
+    {
+        $or: [
+            { cuisine: "Peix" },
+            { cuisine: { $nin: ["American", "Chinese"] } },
+            { name: { $regex: "^Wil", $options: "i" } }
+        ]
+    },
+    {
+        _id: 0,
+        restaurant_id: 1,
+        name: 1,
+        borough: 1,
+        cuisine: 1
+    }
+)
 
 // 22. Trobar restaurant_id, name, i grades per grau "A", score 11, i data "2014-08-11T00:00:00Z".
 
